@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${VERSION}
+    ports:
+      - 9200:9200
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:${VERSION}
+    ports:
+      - 5601:5601
+    environment:
+      ELASTICSEARCH_HOSTS: "http://es:9200"
+
+  apm:
+    image: docker.elastic.co/apm/apm-server-oss:${VERSION}
+    ports:
+      - 8200:8200
+    command: --strict.perms=false -e -E output.elasticsearch.hosts=["es:9200"]
